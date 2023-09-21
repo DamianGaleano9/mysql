@@ -1,0 +1,50 @@
+USE devcamp_sql_university_schema;
+
+-- Nota que da Cada Profesor
+
+SELECT p.profesores_nombre, AVG(c.calificacion) AS AVERAGE
+FROM profesores p
+INNER JOIN calificaciones c
+ON p.profesores_id = c.profesores_id
+GROUP BY p.profesores_nombre;
+
+
+-- Mejor nota de cada Estudiante
+
+SELECT e.estudiantes_name, MAX(c.calificacion) AS TOP
+FROM estudiantes e
+INNER JOIN calificaciones c
+ON e.estudiantes_id = c.estudiantes_id
+GROUP BY e.estudiantes_name;
+
+-- cursos en los que estan matriculados los estudiantes
+
+SELECT e.estudiantes_name, GROUP_CONCAT(cu.cursos_nombre ORDER BY cu.cursos_nombre ASC) AS COURSES
+FROM estudiantes e
+INNER JOIN calificaciones c
+ON e.estudiantes_id = c.estudiantes_id
+INNER JOIN cursos cu 
+ON c.cursos_id = cu.cursos_id
+GROUP BY e.estudiantes_name;
+
+
+-- Informe Resumido  Curso y Calificaciones Promedio
+SELECT cu.cursos_nombre, AVG(c.calificacion) AS Promedio
+FROM cursos cu
+INNER JOIN calificaciones c
+ON cu.cursos_id = c.cursos_id
+GROUP BY cu.cursos_nombre
+ORDER BY Promedio ASC;
+
+
+-- Profesor y estudiantes que coinciden en mas cursos
+
+SELECT e.estudiantes_name AS 'Nombre Estudiante', p.profesores_nombre AS 'Nombre Profesor', COUNT(*) AS CursosComunes
+FROM estudiantes e
+INNER JOIN calificaciones c
+ON e.estudiantes_id = c.estudiantes_id
+INNER JOIN profesores p 
+ON c.profesores_id = p.profesores_id
+GROUP BY e.estudiantes_name, p.profesores_nombre
+ORDER BY CursosComunes DESC
+LIMIT 1;
